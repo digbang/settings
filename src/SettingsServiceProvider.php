@@ -2,6 +2,8 @@
 
 namespace Digbang\Settings;
 
+use Digbang\Settings\Repositories\CacheRepository;
+use Digbang\Settings\Repositories\CacheSettingsRepository;
 use Digbang\Settings\Repositories\DoctrineSettingsRepository;
 use Digbang\Settings\Repositories\SettingsRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,6 +31,7 @@ class SettingsServiceProvider extends ServiceProvider
 
     public function register()
     {
+        $this->app->bind(CacheRepository::class, CacheSettingsRepository::class);
         $this->app->bind(SettingsRepository::class, DoctrineSettingsRepository::class);
 
         $this->commands([

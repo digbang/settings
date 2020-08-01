@@ -4,13 +4,13 @@ if (! function_exists('setting')) {
 
     /**
      * @param string $key
-     * @return mixed
+     * @return mixed|null
      */
     function setting(string $key)
     {
-        /** @var \Digbang\Settings\Repositories\SettingsRepository $repository */
-        $repository = app(\Digbang\Settings\Repositories\SettingsRepository::class);
+        /** @var \Digbang\Settings\Services\Settings $service */
+        $service = app(\Digbang\Settings\Services\Settings::class);
 
-        return $repository->getValue($key);
+        return $service->getValue($key);
     }
 }

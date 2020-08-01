@@ -7,8 +7,9 @@ namespace Digbang\Settings\Commands;
 use Digbang\Settings\Entities\EnumSetting;
 use Digbang\Settings\Entities\Setting;
 use Digbang\Settings\Repositories\SettingsRepository;
+use Digbang\Settings\Services\Settings;
+use Digbang\Settings\SettingsDTO;
 use Digbang\Utils\Enumerables\Enum;
-use Doctrine\ORM\EntityManagerInterface;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Support\Arr;
@@ -20,7 +21,7 @@ class SyncCommand extends Command
 
     protected $description = 'Sync configured settings with the database.';
 
-    public function handle(Repository $config, SettingsRepository $settingsRepository, EntityManagerInterface $entityManager)
+    public function handle(Repository $config, SettingsRepository $settingsRepository, Settings $settings)
     {
         $exitStatus = 0;
 
@@ -32,6 +33,8 @@ class SyncCommand extends Command
 
         /** @var Collection|Setting[] $removed */
         $removed = $existing->diffKeys($configured);
+
+        $settingsDTO = new SettingsDTO();
 
         foreach ($missing as $key => $setting) {
             try {
@@ -50,7 +53,7 @@ class SyncCommand extends Command
                 $this->info(print_r($current, true), 'vvv');
 
                 if (! $this->option('dry-run')) {
-                    $entityManager->persist($current);
+                    $settingsDTO->addToCreate($current);
                 }
             } catch (\InvalidArgumentException $exception) {
                 $this->error("Invalid configuration for setting [$key].");
@@ -65,12 +68,12 @@ class SyncCommand extends Command
             $this->warn(print_r($setting, true), 'vvv');
 
             if (! $this->option('dry-run')) {
-                $entityManager->remove($setting);
+                $settingsDTO->addToDelete($setting);
             }
         }
 
         if (! $this->option('dry-run')) {
-            $entityManager->flush();
+            $settings->save($settingsDTO);
         }
 
         return $exitStatus;
