@@ -31,10 +31,8 @@ class Settings
      */
     public function getValue(string $key)
     {
-        $value = $this->cacheRepository->getValue($key);
-
-        if ($value) {
-            return $value;
+        if ($this->cacheRepository->has($key)) {
+            return $this->cacheRepository->getValue($key);
         }
 
         $setting = $this->repository->get($key);

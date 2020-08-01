@@ -22,6 +22,11 @@ class CacheSettingsRepository implements CacheRepository
         return $this->cache->get($key, null);
     }
 
+    public function has(string $key): bool
+    {
+        return $this->cache->has($key);
+    }
+
     public function put(Setting $setting): void
     {
         $this->cache->put($setting->getKey(), $setting->getValue(), new DateInterval('P1Y'));

@@ -12,6 +12,8 @@ interface CacheRepository
      */
     public function getValue(string $key);
 
+    public function has(string $key): bool;
+
     public function put(Setting $setting): void;
 
     public function forget(Setting $setting): void;
