@@ -47,37 +47,37 @@ abstract class SettingTestCase extends TestCase
     abstract public function onlyInvalidValues(array $examples): array;
 
     /** @test */
-    public function it_has_a_key()
+    public function itHasAKey()
     {
         $this->assertEquals($this->aKey, $this->setting->getKey());
     }
 
     /** @test */
-    public function it_has_a_name()
+    public function itHasAName()
     {
         $this->assertEquals($this->aName, $this->setting->getName());
     }
 
     /** @test */
-    public function it_has_a_description()
+    public function itHasADescription()
     {
         $this->assertEquals($this->aDescription, $this->setting->getDescription());
     }
 
     /** @test */
-    public function it_has_a_value()
+    public function itHasAValue()
     {
         $this->assertEquals($this->aValue, $this->setting->getValue());
     }
 
     /** @test */
-    public function it_is_not_nullable_by_default()
+    public function itIsNotNullableByDefault()
     {
         $this->assertEquals(false, $this->setting->isNullable());
     }
 
     /** @test */
-    public function it_can_be_nullable()
+    public function itCanBeNullable()
     {
         $setting = $this->createSetting(
             $this->aKey, $this->aName, $this->aDescription, $this->aValue,
@@ -88,7 +88,7 @@ abstract class SettingTestCase extends TestCase
     }
 
     /** @test */
-    public function it_can_be_set_a_new_value()
+    public function itCanBeSetANewValue()
     {
         $newValue = $this->anotherValue();
 
@@ -97,7 +97,7 @@ abstract class SettingTestCase extends TestCase
     }
 
     /** @test @dataProvider invalidValues */
-    public function it_cannot_be_set_an_invalid_value($invalidValue)
+    public function itCannotBeSetAnInvalidValue($invalidValue)
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -105,7 +105,7 @@ abstract class SettingTestCase extends TestCase
     }
 
     /** @test */
-    public function it_cannot_be_set_to_null()
+    public function itCannotBeSetToNull()
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -113,7 +113,7 @@ abstract class SettingTestCase extends TestCase
     }
 
     /** @test */
-    public function it_can_be_set_to_null_when_nullable()
+    public function itCanBeSetToNullWhenNullable()
     {
         $setting = $this->createSetting($this->aKey, $this->aName, $this->aDescription, null, true);
 

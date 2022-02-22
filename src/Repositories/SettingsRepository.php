@@ -14,7 +14,7 @@ interface SettingsRepository
     public function get(string $key): Setting;
 
     /**
-     * List settings by keys. (Exact matching)
+     * List settings by keys. (Exact matching).
      *
      * @return Setting[]
      */

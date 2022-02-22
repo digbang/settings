@@ -65,7 +65,6 @@ class DoctrineSettingsRepository extends EntityRepository implements SettingsRep
      *
      * $filters can have any combination of "key", "name" and/or "description".
      * "key" may be a string or a string array, with multiple keys to search.
-     *
      */
     public function search(array $filters, array $orderBy, ?int $perPage = null, int $page = 1)
     {
@@ -77,7 +76,7 @@ class DoctrineSettingsRepository extends EntityRepository implements SettingsRep
             }
 
             $orX = $queryBuilder->expr()->orX();
-            foreach($keys as $i => $key) {
+            foreach ($keys as $i => $key) {
                 $orX->add("LOWER($alias.key) LIKE LOWER(:key_$i)");
                 $keysParams["key_$i"] = "%$key%";
             }
@@ -88,12 +87,12 @@ class DoctrineSettingsRepository extends EntityRepository implements SettingsRep
 
         if ($name = array_get($filters, 'name')) {
             $queryBuilder->andWhere("LOWER($alias.name) LIKE LOWER(:name)");
-            $queryBuilder->setParameter('name', "%" . str_replace(' ', '%', $name) . "%");
+            $queryBuilder->setParameter('name', '%' . str_replace(' ', '%', $name) . '%');
         }
 
         if ($description = array_get($filters, 'description')) {
             $queryBuilder->andWhere("LOWER($alias.description) LIKE LOWER(:description)");
-            $queryBuilder->setParameter('description', "%" . str_replace(' ', '%', $description) . "%");
+            $queryBuilder->setParameter('description', '%' . str_replace(' ', '%', $description) . '%');
         }
 
         foreach ($orderBy as $column => $sense) {
