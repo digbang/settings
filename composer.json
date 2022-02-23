@@ -5,7 +5,7 @@
     "require": {
         "php": "^7.4 || ^8.0.2",
         "cakephp/chronos": "^2.0",
-        "digbang/utils": "^1.4",
+        "digbang/utils": "^2.0",
         "illuminate/support": "^8.0 || ^9.0",
         "illuminate/view": "^8.0 || ^9.0",
         "laravel-doctrine/orm": "^1.7"
