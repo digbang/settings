@@ -24,23 +24,13 @@ class SyncCommand extends Command
 
     protected $signature = 'settings:sync 
         {--dry-run : Only show what would be done, without doing it. }
-        {--update-fields= : Will update name or/and description fields from the config file. }';
+        {--update-descriptors : Will update name and description fields from the config file. }';
 
     protected $description = 'Sync configured settings with the database.';
-
-    private array $availableFieldsToUpdate = [self::NAME, self::DESCRIPTION];
 
     public function handle(Repository $config, SettingsRepository $settingsRepository, EntityManagerInterface $entityManager)
     {
         $exitStatus = 0;
-
-        try {
-            $this->validateUpdateFields();
-        } catch (\InvalidArgumentException $exception) {
-            $this->error($exception->getMessage());
-
-            return ++$exitStatus;
-        }
 
         $existing = $settingsRepository->all();
         $configured = new Collection($config->get('settings.settings'));
@@ -87,9 +77,7 @@ class SyncCommand extends Command
             }
         }
 
-        if ($this->option('update-fields')) {
-            $fields = explode(',', $this->option('update-fields'));
-
+        if ($this->option('update-descriptors')) {
             /** @var Setting $setting */
             foreach ($existing as $setting) {
                 try {
@@ -102,19 +90,12 @@ class SyncCommand extends Command
 
                     $this->validConfig($new);
 
-                    $this->warn("Updating [$key] fields.");
-
                     if (! $this->option('dry-run')) {
-                        if (in_array(self::NAME, $fields)) {
-                            $setting->setName($new[self::NAME]);
-                        }
-
-                        if (in_array(self::DESCRIPTION, $fields)){
-                            $setting->setDescription($new[self::DESCRIPTION]);
-                        }
-                        
-                        $this->info("Updated [$key].");
+                        $setting->setName($new[self::NAME]);
+                        $setting->setDescription($new[self::DESCRIPTION]);
                     }
+
+                    $this->info("Updated [$key] descriptors.");
                 } catch (\InvalidArgumentException $exception) {
                     $this->error("Invalid configuration for setting [$key].");
                     $this->error($exception->getMessage(), 'v');
@@ -169,21 +150,5 @@ class SyncCommand extends Command
         }
 
         return $default;
-    }
-
-    private function validateUpdateFields(): void
-    {
-        if (! $this->option('update-fields')) {
-            return;
-        }
-
-        $fields = explode(',', $this->option('update-fields'));
-        
-        foreach ($fields as $field) {
-            throw_if(
-                (! in_array($field, $this->availableFieldsToUpdate)),
-                new \InvalidArgumentException('The only available values for update-fields option are: ' . implode(',', $this->availableFieldsToUpdate))
-            );
-        }
     }
 }
