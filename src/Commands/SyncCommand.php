@@ -64,7 +64,7 @@ class SyncCommand extends Command
                 $this->error("Invalid configuration for setting [$key].");
                 $this->error($exception->getMessage(), 'v');
 
-                ++$exitStatus;
+                $exitStatus = 1;
             }
         }
 
@@ -75,6 +75,8 @@ class SyncCommand extends Command
             if (! $this->option('dry-run')) {
                 $entityManager->remove($setting);
             }
+
+            $existing->forget($key);
         }
 
         if ($this->option('update-descriptors')) {
@@ -82,17 +84,13 @@ class SyncCommand extends Command
             foreach ($existing as $setting) {
                 try {
                     $key = $setting->getKey();
-                    $new = $configured[$key] ?? null;
+                    $configuredSetting = $configured[$key];
 
-                    if (! $new) {
-                        continue;
-                    }
-
-                    $this->validConfig($new);
+                    $this->validConfig($configuredSetting);
 
                     if (! $this->option('dry-run')) {
-                        $setting->setName($new[self::NAME]);
-                        $setting->setDescription($new[self::DESCRIPTION]);
+                        $setting->setName($configuredSetting[self::NAME]);
+                        $setting->setDescription($configuredSetting[self::DESCRIPTION]);
                     }
 
                     $this->info("Updated [$key] descriptors.");
@@ -100,7 +98,7 @@ class SyncCommand extends Command
                     $this->error("Invalid configuration for setting [$key].");
                     $this->error($exception->getMessage(), 'v');
 
-                    ++$exitStatus;
+                    $exitStatus = 1;
                 }
             }
         }
