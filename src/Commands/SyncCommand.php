@@ -94,7 +94,12 @@ class SyncCommand extends Command
             foreach ($existing as $setting) {
                 try {
                     $key = $setting->getKey();
-                    $new = $configured[$key];
+                    $new = $configured[$key] ?? null;
+
+                    if (! $new) {
+                        continue;
+                    }
+
                     $this->validConfig($new);
 
                     $this->warn("Updating [$key] fields.");
