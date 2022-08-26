@@ -73,6 +73,18 @@ abstract class Setting
         $this->value = $this->encode($value);
     }
 
+    /** @param string $name */
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    /** @param string $description */
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
+    }
+
     public function getValue()
     {
         if ($this->value === null && $this->isNullable()) {
