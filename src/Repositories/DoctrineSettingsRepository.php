@@ -82,7 +82,9 @@ class DoctrineSettingsRepository extends EntityRepository implements SettingsRep
             }
 
             $queryBuilder->andWhere($orX);
-            $queryBuilder->setParameters($keysParams);
+            foreach ($keysParams as $paramKey => $paramValue) {
+                $queryBuilder->setParameter($paramKey, $paramValue);
+            }
         }
 
         if ($name = array_get($filters, 'name')) {
@@ -126,7 +128,7 @@ class DoctrineSettingsRepository extends EntityRepository implements SettingsRep
      */
     public function setValue(string $key, $value): Setting
     {
-        return $this->getEntityManager()->transactional(function () use ($key, $value) {
+        return $this->getEntityManager()->wrapInTransaction(function () use ($key, $value) {
             $setting = $this->get($key);
             $setting->setValue($value);
 
